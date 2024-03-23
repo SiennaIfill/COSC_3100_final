@@ -1,0 +1,46 @@
+/**
+ * Class Name: Deck
+ * @author Sienna Ifill
+ * Created on: 3/23/2024
+ * Description: 
+ *   creates a Deck object that contains an array of 52 Card objects
+ *   Shuffle method randomly shuffles the cards in the deck array, moving each card to a new index
+ */
+import java.util.Random;
+
+public class Deck {
+	private Card[] deck;
+	
+	//constructor creates an ordered deck of cards, jokers excluded
+	public Deck() {
+		this.deck = new Card[52];
+		int count = 0;
+		for(int i = 1; i < 5; i++) {
+			for(int j = 1; j < 14; j++) {
+				Card card = new Card(j,i);
+				deck[count] = card;
+				count++;
+			}
+		}
+	}
+	//makes deck array accessible to other classes
+	public Card[] getDeck() {return deck;}
+	//shuffle method shuffles the deck utilizing random function
+	public void Shuffle() {
+		Random rand = new Random();
+		for(int card1 = 0; card1 < deck.length; card1++) {
+			int card2 = rand.nextInt(52);
+			Card temp = deck[card1];
+			deck[card1] = deck[card2];
+			deck[card2] = temp;
+		}
+	}
+	//returns a string of all the cards in the deck with a new line for each card, mostly for testing purposes
+	public String PrintDeck() {
+		String fullDeck = "";
+		for(int i = 0; i < deck.length; i++) {
+			fullDeck += deck[i].getName() + "\n";
+		}
+		return fullDeck;
+	}
+}
