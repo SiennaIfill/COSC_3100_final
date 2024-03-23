@@ -1,0 +1,78 @@
+/**
+ * Class Name: Card
+ * @author Sienna Ifill
+ * Created on: 3/23/2024
+ * Description: 
+ *   creates a Card object that has a number value, suit, and color
+ *   validCard method ensures all cards are real cards to avoid problems later
+ *   getName returns a string card name (ex: Ace of Spades)
+ */
+
+
+public class Card {
+	//val relates to card number (ace through king = 1-13)- joker will maybe be zero?
+	//suit: 1=diamond,2=heart,3=club,4=spade
+	//color: 1 = red, 2 = black
+	private int val, suit, color;
+	
+	//constructor method
+	public Card(int val, int suit) {
+		this.val = val;
+		this.suit = suit;
+		if(suit == 1 || suit == 2) 
+			color = 1;
+		else
+			color = 2;
+		
+	}
+	//ensures card was stored correctly to avoid issues later
+	public boolean validCard() {
+		if(val < 0 || val > 13)
+			return false;
+		else if(suit < 1 || suit > 4) 
+			//joker does not need a suit
+			if(val != 0)
+				return false;
+		else if(color < 1 || color > 2)
+			return false;
+		return true;
+	}
+	//getter methods
+	public int getVal() {return val;}
+	public int getSuit() {return suit;}
+	public int getColor() {return color;}
+	public String getName() {
+		String number = "";
+		String type = "";
+		switch(val) {
+			case 0: number = "Joker"; break;	
+			case 1: number = "Ace"; break;
+			case 2: number = "Two"; break;
+			case 3: number = "Three"; break;
+			case 4: number = "Four"; break;
+			case 5: number = "Five"; break;
+			case 6: number = "Six"; break;
+			case 7: number = "Seven"; break;
+			case 8: number = "Eight"; break;
+			case 9: number = "Nine"; break;
+			case 10: number = "Ten"; break;
+			case 11: number = "Jack"; break;
+			case 12: number = "Queen"; break;
+			case 13: number = "King"; break;
+		}
+		switch(suit) {
+			case 1: type = "Diamonds"; break;
+			case 2: type = "Hearts"; break;
+			case 3: type = "Clubs"; break;
+			case 4: type = "Spades"; break;
+		}
+		if(val == 0) {
+			if(color == 1)
+				return "Red Joker";
+			if(color == 2)
+				return "Black Joker";
+		}
+		return number + " of " + type;	
+	}
+	
+}
