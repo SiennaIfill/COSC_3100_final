@@ -1,0 +1,66 @@
+/**
+ * Class Name: Foundation
+ * @author Sienna Ifill
+ * Created on: 3/23/2024
+ * Description: 
+ *   creates a linked list of cards that is initially null
+ *   addCard method will add cards of the same suit in order of ace to king
+ *   isFull returns if the stack is full
+ */
+
+public class Foundation {
+	private LLNode<Card> top;
+	private int suit;
+	
+	public Foundation(int suit) {
+		top = null;
+		this.suit = suit;
+	}
+	
+	//adds new card to foundation pile, checking that card is valid
+	public void addCard(Card nextCard) {
+		if(nextCard.getSuit() != this.suit) {
+			System.out.println("INVALID CARD, WRONG SUIT");
+		}else {
+			LLNode<Card> next = new LLNode<Card>(nextCard);
+			//case 1, no cards down
+			if(top == null) {
+				if(nextCard.getVal() == 1) {
+					top = next;
+				}
+			} //case 2, some or all cards down
+			else {
+				int currentVal = top.getInfo().getVal();
+				int nextVal = nextCard.getVal();
+				if(currentVal+1 != nextVal) {
+					System.out.println("INVALID CARD, OUT OF ORDER");
+				}
+				else {
+					next.setLink(top);
+					top = next;
+				}
+			}
+		}	
+	}
+	//checks if king is on top to see if foundation is complete
+	public boolean isFull() {
+		if(top.info.getVal() == 13)
+			return true;
+		return false;
+	}
+	//prints top value
+	public void printTop() {
+		if(top == null)
+			System.out.println("No cards in foundation");
+		else
+			System.out.println(top.info.getVal());
+	}
+	//prints from top to bottom, for testing purposes
+	public void printFoundation() {
+		LLNode<Card> traverser = top;
+		while(traverser != null) {
+			System.out.println(traverser.info.getVal());
+			traverser = traverser.getLink();
+		}
+	}
+}
