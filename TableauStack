@@ -6,18 +6,24 @@
  *   creates a single linked list utilized in the larger tableau function
  */
 
+
+import java.lang.Math;
 //initializes the card stack with only the top card marked as visible
+
 public class TableauStack implements LinkedCards{
 	private LLNode<Card> top;
 	private int length;
 	//takes an initial length and card array of appropriate size and initializes stack
 	public TableauStack(int length, Card[] deckpart) {
 		top = new LLNode<Card>(deckpart[0]);
+		if(length == 1)
+			this.length = 1;
 		if(length > 1) {
 			for(int i = 0; i < deckpart.length; i++) {
 				addCard(deckpart[i]);
 			}
 		}
+		//initializes the card stack with only the top card marked as visible
 		top.info.setVisible(true);
 		System.out.println(top.getInfo().getName()+" is the top, visible card");
 		
@@ -103,4 +109,76 @@ public class TableauStack implements LinkedCards{
 				System.out.println("X");
 		}
 	}
+	//used in Tableau printTableau method to print a full Tableau
+	public String[] printArray(int size) {
+		String[] returnArr = new String[size];
+		Card[] cards = new Card[length];
+		LLNode<Card> pointer = top;
+		//stores all cards in array
+		for(int i = 0; i<length;i++) {
+			cards[i] = pointer.getInfo();
+			pointer = pointer.getLink();
+		}
+		//case 1, all indices have a value
+		if(length == size) {
+			int count = 0;
+			for(int j = size - 1; j > -1; j-- ) {
+				String str = "";
+				if(cards[j].getVisible()){
+					str += " "+cards[j].getVal()+" ";
+				}
+				else
+					str += " X ";
+				returnArr[count] = str;
+				count++;
+			}
+		}
+		//case 2, some indices should be blank
+		else {
+			int count = 0;
+			for(int j = length - 1; j > -1; j-- ) {
+				String str = "";
+				if(cards[j].getVisible()){
+					str += " "+cards[j].getVal()+" ";
+				}
+				else
+					str += " X ";
+				returnArr[count] = str;
+				count++;
+			}
+			int remaining = size - length;
+			for(int k = 0; k < remaining; k++) {
+				returnArr[k+length] = " - ";
+			}
+		}
+		return returnArr;
+	}
+
+	//used in Tableau to see if stack is empty
+	public boolean isEmpty() {
+		if(top == null)
+			return true;
+		return false;
+	}
+	
+	//checks if card in this stack can be placed on top of card on another stack
+	// here must be the opposite color and have there.val - 1 as its val
+	public boolean canStack(Card here, Card there) {
+		//case 1, empty stack
+		if(there == null) {
+			if(here.getVal() == 13)
+				return true;
+			return false;
+		}
+		//case 2, there is a card with a val
+		if(here.getVal()+1 == there.getVal()) {
+			if(Math.abs(here.getColor()-there.getColor())== 1)
+				return true;
+		}
+		return false;
+	}
+	//returns length, used for printTableau() in Tableau
+	public int getLength() {return length;}
+	//returns top, used for printTableau() in Tableau to make pointers
+	public LLNode<Card> getTop() {return top;}
 }
