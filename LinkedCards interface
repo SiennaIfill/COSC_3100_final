@@ -1,0 +1,11 @@
+/**
+ * Interface Name: LinkedCards
+ * @author Sienna Ifill
+ * Created on: 3/23/2024
+ * Description: 
+ *   methods common in all classes that utilize a linked list of cards
+ */
+public interface LinkedCards {
+	boolean isFull();
+	void addCard(Card nextCard);
+}
