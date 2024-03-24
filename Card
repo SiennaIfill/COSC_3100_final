@@ -14,11 +14,13 @@ public class Card {
 	//suit: 1=diamond,2=heart,3=club,4=spade
 	//color: 1 = red, 2 = black
 	private int val, suit, color;
-	
+	private boolean visible;
+
 	//constructor method
 	public Card(int val, int suit) {
 		this.val = val;
 		this.suit = suit;
+		visible = false;
 		if(suit == 1 || suit == 2) 
 			color = 1;
 		else
@@ -37,10 +39,13 @@ public class Card {
 			return false;
 		return true;
 	}
+	//setter method for visible bool, utilized for tableau
+	public void setVisible(boolean bool) {visible = bool;}
 	//getter methods
 	public int getVal() {return val;}
 	public int getSuit() {return suit;}
 	public int getColor() {return color;}
+	public boolean getVisible() {return visible;}
 	public String getName() {
 		String number = "";
 		String type = "";
