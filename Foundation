@@ -61,6 +61,9 @@ public class Foundation implements LinkedCards{
 	//prints from top to bottom, for testing purposes
 	public void printFoundation() {
 		LLNode<Card> traverser = top;
+		if(top == null) {
+			System.out.println("Foundation is empty");
+		}
 		while(traverser != null) {
 			System.out.println(traverser.info.getVal());
 			traverser = traverser.getLink();
