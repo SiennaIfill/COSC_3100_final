@@ -1,0 +1,60 @@
+/**
+ * Class Name: Tableau
+ * @author Sienna Ifill
+ * Created on: 3/24/2024
+ * Description: 
+ *   creates a tableau containing 7 tableau stacks, initialized at the appropriate lengths
+ *   isEmpty method checks if all 7 tableau stacks are empty
+ */
+
+public class Tableau {
+	private TableauStack s1, s2, s3, s4, s5, s6, s7;
+	private TableauStack[] stacks;
+	//given a tableau Card[] from the Deck, initializes all TableauStacks
+	public Tableau(Card[] cards) {
+		Card[] c1 = {cards[0]};
+		s1 = new TableauStack(1, c1);
+		Card[] c2 = {cards[1], cards[2]};
+		s2 = new TableauStack(2, c2);
+		Card[] c3 = {cards[3], cards[4], cards[5]};
+		s3 = new TableauStack(3, c3);
+		Card[] c4 = {cards[6], cards[7], cards[8], cards[9]};
+		s4 = new TableauStack(4, c4);
+		Card[] c5 = {cards[10], cards[11], cards[12], cards[13], cards[14]};
+		s5 = new TableauStack(5, c5);
+		Card[] c6 = {cards[15], cards[16], cards[17], cards[18], cards[19], cards[20]};
+		s6 = new TableauStack(6, c6);
+		Card[] c7 = {cards[21], cards[22], cards[23], cards[24], cards[25], cards[26], cards[27]};
+		s7 = new TableauStack(7, c7);
+		stacks = new TableauStack[] {s1, s2, s3, s4, s5, s6, s7};
+	}
+	
+	//finds if all stacks are empty
+	public boolean isEmpty() {
+		for(int i = 0; i < 7; i++) {
+			if(!stacks[i].isEmpty())
+				return false;
+		}
+		return true;
+	}
+	
+	public void printTableau() {
+		int maxLength = 0;
+		for(int i = 0; i < 7; i++) {
+			if(stacks[i] != null)
+				if(stacks[i].getLength() > maxLength)
+					maxLength = stacks[i].getLength();
+		}
+		String[][] cards = {s1.printArray(maxLength),s2.printArray(maxLength),s3.printArray(maxLength),s4.printArray(maxLength),s5.printArray(maxLength),s6.printArray(maxLength),s7.printArray(maxLength)};
+		for(int j = 0; j < 7; j++) {
+			for(int k = 0; k < maxLength; k++) {
+				System.out.print(cards[k][j]);
+			}
+			System.out.println("");
+		}
+	}
+	
+	public TableauStack getStack(int num) {
+		return stacks[num+1];
+	}
+}
