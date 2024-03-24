@@ -8,7 +8,7 @@
  *   isFull returns if the stack is full
  */
 
-public class Foundation {
+public class Foundation implements LinkedCards{
 	private LLNode<Card> top;
 	private int suit;
 	
@@ -16,7 +16,8 @@ public class Foundation {
 		top = null;
 		this.suit = suit;
 	}
-	
+
+	@Override
 	//adds new card to foundation pile, checking that card is valid
 	public void addCard(Card nextCard) {
 		if(nextCard.getSuit() != this.suit) {
@@ -42,6 +43,8 @@ public class Foundation {
 			}
 		}	
 	}
+
+	@Override
 	//checks if king is on top to see if foundation is complete
 	public boolean isFull() {
 		if(top.info.getVal() == 13)
