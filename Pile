@@ -1,0 +1,83 @@
+/**
+ * Class Name: Pile
+ * @author Sienna Ifill
+ * Created on: 3/24/2024
+ * Description: 
+ *   creates a Pile object that has a Card[] array and int pointer that always points to top (visible) card
+ *   take() method removes a card from the array
+ *   flip() method moves the pointer to the next array and creates a new, likely smaller array when the end of the array is reached
+ */
+public class Pile {
+	private Card[] cards;
+	private int pointer, length;
+	
+	//initialize Pile with Card array and a pointer at index zero
+	public Pile(Card[] cards) {
+		this.cards = cards;
+		pointer = 0;
+		length = cards.length;
+	}
+	//returns true if pile is empty
+	public boolean isEmpty() {return length == 0;}
+	//returns the 'top' card and removes it from the array
+	public Card take() {
+		Card toReturn = cards[pointer];
+		cards[pointer] = null;
+		goBack();
+		return toReturn;
+	}
+	private void goBack() {
+		//most recent card becomes top card
+		while(pointer > -1 && cards[pointer] == null) {
+			pointer--;	
+		}
+		//special case, all previous cards are null
+		if(pointer == -1) {
+			pointer++;
+			while(cards[pointer] == null&&!isEmpty()) {
+				flip();
+			}
+		}
+	}
+	
+	//flips card from top of pile to waste, flips whole pile if top card is the end of the array
+	public void flip() {
+		pointer++;
+		//special case, end of array reached-- need to make smaller array and send pointer back to top
+		if(pointer>length) {
+			int voidCount = 0;
+			for(int i = 0; i < length; i++) {
+				if(cards[i] == null)
+					voidCount++;
+			}
+			int newLength = length-voidCount;
+			Card[] newCards = new Card[newLength];
+			int cardCount = 0;
+			for(int j = 0; j < length; j++) {
+				if(cardCount == newLength)
+					break;
+				if(cards[j] != null) {
+					newCards[cardCount] = cards[j];
+					cardCount++;
+				}
+			}
+			cards = newCards;
+			length = newLength;
+			pointer = 0;
+		}
+	}
+	//prints pile with all cards after pointer hidden-- will be changed later
+	public void printPile() {
+		for(int i = 0; i < length; i++) {
+			if(i<=pointer) {
+				if(cards[i] !=null) {
+					System.out.print(" "+cards[i].getName()+" ");
+				}
+				else
+					System.out.print(" - ");
+			}
+			else
+				System.out.print(" X ");
+		}
+	}
+}
