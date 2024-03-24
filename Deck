@@ -2,6 +2,7 @@
  * Class Name: Deck
  * @author Sienna Ifill
  * Created on: 3/23/2024
+ * Last modified: 3/24/2024
  * Description: 
  *   creates a Deck object that contains an array of 52 Card objects
  *   Shuffle method randomly shuffles the cards in the deck array, moving each card to a new index
@@ -9,7 +10,7 @@
 import java.util.Random;
 
 public class Deck {
-	private Card[] deck;
+	private Card[] deck, tableau, pile;
 	
 	//constructor creates an ordered deck of cards, jokers excluded
 	public Deck() {
@@ -22,6 +23,7 @@ public class Deck {
 				count++;
 			}
 		}
+		tableauAndPile();
 	}
 	//makes deck array accessible to other classes
 	public Card[] getDeck() {return deck;}
@@ -34,6 +36,7 @@ public class Deck {
 			deck[card1] = deck[card2];
 			deck[card2] = temp;
 		}
+		tableauAndPile();
 	}
 	//returns a string of all the cards in the deck with a new line for each card, mostly for testing purposes
 	public String PrintDeck() {
@@ -43,4 +46,21 @@ public class Deck {
 		}
 		return fullDeck;
 	}
+	
+	//uses deck as currently sorted to initialize Card[] variables for tableau and pile creation
+	private void tableauAndPile() {
+		tableau = new Card[28];
+		for(int i = 0; i < 28; i++) {
+			tableau[i] = deck[i];
+		}
+		pile = new Card[deck.length - 28];
+		for(int j = 28; j < deck.length; j++) {
+			pile[j-28] = deck[j];
+		}
+	}
+	
+	//returns tableau Card[]
+	public Card[] getTableau() {return tableau;}
+	//returns pile Card[]
+	public Card[] getPile() {return pile;}
 }
