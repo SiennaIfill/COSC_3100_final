@@ -1,0 +1,106 @@
+/**
+ * Class Name: Foundation
+ * @author Sienna Ifill
+ * Created on: 3/23/2024
+ * Description: 
+ *   creates a single linked list utilized in the larger tableau function
+ */
+
+//initializes the card stack with only the top card marked as visible
+public class TableauStack implements LinkedCards{
+	private LLNode<Card> top;
+	private int length;
+	//takes an initial length and card array of appropriate size and initializes stack
+	public TableauStack(int length, Card[] deckpart) {
+		top = new LLNode<Card>(deckpart[0]);
+		if(length > 1) {
+			for(int i = 0; i < deckpart.length; i++) {
+				addCard(deckpart[i]);
+			}
+		}
+		top.info.setVisible(true);
+		System.out.println(top.getInfo().getName()+" is the top, visible card");
+		
+	}
+	
+	//interface is used but stack can never be full
+	public boolean isFull() {return false;}
+
+	
+	//links card to top and makes it the new top
+	public void addCard(Card nextCard) {
+		LLNode<Card> next = new LLNode<Card>(nextCard);
+		next.setLink(top);
+		top = next;
+		length++;
+		System.out.println(nextCard.getName()+" added. Length is now "+length);
+	}
+	//removes top card from stack and returns the card to store in a different place
+	public Card removeTop() {
+		if(length != 0)
+			length--;
+		if(top == null) {
+			System.out.println("INVALID OPERATION, STACK IS EMPTY");
+			return null;
+		}
+		else {
+			Card oldTop = top.getInfo();
+			top = top.getLink();
+			top.info.setVisible(true);
+			return oldTop;
+		}
+	}
+	//find a visible card in a stack and keeps link to all cards above it, moving them to a new tableau stack
+	public void switchStack(Card move, TableauStack other){
+		LLNode<Card> pointer = top;
+		int count = 0;
+		//finds move card
+		while(pointer != null && pointer.info.getVisible()) {
+			if(pointer.info == move)
+				break;
+			pointer = pointer.getLink();
+			count++;
+		}
+		//adds card stack to new pile
+		if(pointer.getInfo() != move || !pointer.info.getVisible()) {
+			Card[] addnext = new Card[count];
+			LLNode<Card> oldTop = top;
+			//reassigns top to new top of stack
+			top = pointer.getLink();
+			top.getInfo().setVisible(true);
+			//stores all cards before desired card into array
+			for(int i = 0; i < count; i++) {
+				addnext[i] = oldTop.getInfo();
+				oldTop = oldTop.getLink();
+			}
+			//correctly places earlier cards onto new stack
+			for(int j = count - 1; j > -1; j--) {
+				other.addCard(addnext[j]);
+			}
+			length = length - count;
+		}
+		//card not found
+		else {
+			System.out.println("INVALID OPERATION");
+		}
+	}
+	
+	
+	//prints a stack top to bottom with Xs for hidden cards
+	public void printStack() {
+		Card[] cards = new Card[length];
+		LLNode<Card> pointer = top;
+		//stores all cards in array
+		for(int i = 0; i<length;i++) {
+			cards[i] = pointer.getInfo();
+			pointer = pointer.getLink();
+		}
+		//prints all cards in order
+		for(int j = length - 1; j > -1; j--) {
+			if(cards[j].getVisible())
+				System.out.println(cards[j].getName());
+			else
+				System.out.println("X");
+		}
+	}
+}
