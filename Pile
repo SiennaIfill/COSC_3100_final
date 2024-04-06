@@ -80,4 +80,5 @@ public class Pile {
 				System.out.print(" X ");
 		}
 	}
+	public Card getTop() { return cards[pointer];}
 }
