@@ -46,6 +46,28 @@ public class Card {
 	public int getSuit() {return suit;}
 	public int getColor() {return color;}
 	public boolean getVisible() {return visible;}
+	public String getShortName() {
+		String suitC = "";
+		if(suit == 1)
+			suitC = "D";
+		else if(suit == 2)
+			suitC = "H";
+		else if(suit == 3)
+			suitC = "C";
+		else 
+			suitC = "S";
+		String valC = val+"";
+		if(val == 1)
+			valC = "A";
+		if(val == 11)
+			valC = "J";
+		if(val == 12)
+			valC = "Q";
+		if(val == 13)
+			valC = "K";
+		
+		return valC+suitC;
+	}
 	public String getName() {
 		String number = "";
 		String type = "";
