@@ -1,14 +1,15 @@
 /**
- * Class Name: Foundation
+ * Class Name: FoundationStack
  * @author Sienna Ifill
  * Created on: 3/23/2024
  * Description: 
  *   creates a linked list of cards that is initially null
  *   addCard method will add cards of the same suit in order of ace to king
  *   isFull returns if the stack is full
+ *   implemented in Foundation class
  */
 
-public class Foundation implements LinkedCards{
+public class FoundationStack implements LinkedCards{
 	private LLNode<Card> top;
 	private int suit;
 	
@@ -17,10 +18,37 @@ public class Foundation implements LinkedCards{
 		this.suit = suit;
 	}
 
+	//checks that card can be added to foundation
+	public boolean canAdd(Card nextCard) {
+		if(nextCard.getSuit() != this.suit) {
+			System.out.println("INVALID CARD, WRONG SUIT. Suit: "+suit+", yours, "+nextCard.getSuit());
+			return false;
+		}else {
+			LLNode<Card> next = new LLNode<Card>(nextCard);
+			//case 1, no cards down
+			if(top == null) {
+				if(nextCard.getVal() == 1) {
+					return true;
+				}
+				return false;
+			} //case 2, some or all cards down
+			else {
+				int currentVal = top.getInfo().getVal();
+				int nextVal = nextCard.getVal();
+				if(currentVal+1 != nextVal) {
+					System.out.println("INVALID CARD, OUT OF ORDER");
+					return false;
+				}
+				else {
+					return true;
+				}
+			}
+		}
+	}
 	@Override
 	//adds new card to foundation pile, checking that card is valid
 	public void addCard(Card nextCard) {
-		if(nextCard.getSuit() != this.suit) {
+		if(!canAdd(nextCard) {
 			System.out.println("INVALID CARD, WRONG SUIT");
 		}else {
 			LLNode<Card> next = new LLNode<Card>(nextCard);
@@ -47,16 +75,25 @@ public class Foundation implements LinkedCards{
 	@Override
 	//checks if king is on top to see if foundation is complete
 	public boolean isFull() {
+		if(top == null)
+			return false;
 		if(top.info.getVal() == 13)
 			return true;
 		return false;
 	}
+	public void removeTop() {
+		if(top != null) {
+			top = top.getLink();
+			if(!top.getInfo().getVisible())
+				top.getInfo().setVisible(true);
+		}
+	}
 	//prints top value
 	public void printTop() {
 		if(top == null)
-			System.out.println("No cards in foundation");
+			System.out.print(" X  ");
 		else
-			System.out.println(top.info.getVal());
+			System.out.print(" "+top.info.getShortName()+" ");
 	}
 	//prints from top to bottom, for testing purposes
 	public void printFoundation() {
@@ -65,7 +102,7 @@ public class Foundation implements LinkedCards{
 			System.out.println("Foundation is empty");
 		}
 		while(traverser != null) {
-			System.out.println(traverser.info.getVal());
+			System.out.println(" "+traverser.info.getVal()+" ");
 			traverser = traverser.getLink();
 		}
 	}
