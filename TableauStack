@@ -39,8 +39,22 @@ public class TableauStack implements LinkedCards{
 		next.setLink(top);
 		top = next;
 		length++;
-		System.out.println(nextCard.getName()+" added. Length is now "+length);
+		//System.out.println(nextCard.getName()+" added. Length is now "+length);
 	}
+	//used for adding cards from pile to tabstacks
+	public boolean canAdd(Card nextCard) {
+		if(top == null) {
+			if(nextCard.getVal() == 13) 
+				return true;
+			System.out.println("Top == null, card val != 13");
+			return false;
+		}
+		if(nextCard.getColor() != top.getInfo().getColor()&& nextCard.getVal() == top.getInfo().getVal()-1) {
+			return true;
+		}
+		return false;
+	}
+
 	//removes top card from stack and returns the card to store in a different place
 	public Card removeTop() {
 		if(length != 0)
@@ -51,15 +65,49 @@ public class TableauStack implements LinkedCards{
 		}
 		else {
 			Card oldTop = top.getInfo();
-			top = top.getLink();
-			top.info.setVisible(true);
+			if(top.getLink() == null) {
+				top = null;
+			}else {
+				top = top.getLink();
+				top.info.setVisible(true);
+			}
 			return oldTop;
 		}
 	}
-	//find a visible card in a stack and keeps link to all cards above it, moving them to a new tableau stack
-	public void switchStack(Card move, TableauStack other){
+	public boolean cardExists(int val) {
 		LLNode<Card> pointer = top;
 		int count = 0;
+		//finds move card
+		while(pointer != null && pointer.info.getVisible()) {
+			if(pointer.info.getVal() == val)
+				break;
+			pointer = pointer.getLink();
+			count++;
+		}
+		if(pointer == null)
+			return false;
+		//checks if card was found
+		if(pointer.getInfo().getVal() == val && pointer.info.getVisible())
+			return true;
+		return false;
+	}
+	public Card getCard(int val) {
+		LLNode<Card> pointer = top;
+		int count = 0;
+		//finds move card
+		while(pointer != null && pointer.info.getVisible()) {
+			if(pointer.info.getVal() == val)
+				break;
+			pointer = pointer.getLink();
+			count++;
+		}
+		return pointer.getInfo();	
+	}
+	//find a visible card in a stack and keeps link to all cards above it, moving them to a new tableau stack
+	//returns T/F so I know if an operation occured
+	public boolean switchStack(Card move, TableauStack other){
+		LLNode<Card> pointer = top;
+		int count = 1;
 		//finds move card
 		while(pointer != null && pointer.info.getVisible()) {
 			if(pointer.info == move)
@@ -68,26 +116,36 @@ public class TableauStack implements LinkedCards{
 			count++;
 		}
 		//adds card stack to new pile
-		if(pointer.getInfo() != move || !pointer.info.getVisible()) {
+		if(pointer.getInfo() == move && pointer.info.getVisible()) {
 			Card[] addnext = new Card[count];
 			LLNode<Card> oldTop = top;
 			//reassigns top to new top of stack
 			top = pointer.getLink();
-			top.getInfo().setVisible(true);
+			if(top != null)
+				top.getInfo().setVisible(true);
 			//stores all cards before desired card into array
 			for(int i = 0; i < count; i++) {
 				addnext[i] = oldTop.getInfo();
 				oldTop = oldTop.getLink();
 			}
+			Card[] temp = new Card[count];
+			int k = count;
+			for(int i = 0; i < count; i++) {
+				temp[k-1] = addnext[i];
+				k--;
+			}
 			//correctly places earlier cards onto new stack
 			for(int j = count - 1; j > -1; j--) {
-				other.addCard(addnext[j]);
+				other.addCard(temp[j]);
+				System.out.println("Card added:"+ temp[j].getShortName());
 			}
 			length = length - count;
+			return true
 		}
 		//card not found
 		else {
 			System.out.println("INVALID OPERATION");
+			return false;
 		}
 	}
 	
@@ -104,9 +162,9 @@ public class TableauStack implements LinkedCards{
 		//prints all cards in order
 		for(int j = length - 1; j > -1; j--) {
 			if(cards[j].getVisible())
-				System.out.println(cards[j].getName());
+				System.out.print(" "+cards[j].getShortName()+" ");
 			else
-				System.out.println("X");
+				System.out.print(" X ");
 		}
 	}
 	//used in Tableau printTableau method to print a full Tableau
