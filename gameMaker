@@ -1,0 +1,147 @@
+/**
+ * Class Name: gameMaker
+ * @author Sienna Ifill
+ * Created on: 4/5/2024
+ * Description: 
+ *   game is set up and run in main method
+ *   some helper methods to run game effectively
+ */
+import java.util.Scanner;
+
+public class gameMaker {
+	
+	public static void main(String args[]) {
+		Scanner scan = new Scanner(System.in);
+		Deck deck = new Deck();
+		deck.Shuffle();
+		Pile pile = new Pile(deck.getPile());
+		Tableau tab = new Tableau(deck.getTableau());
+		Foundation found = new Foundation();
+		while(!found.gameOver()) {
+			System.out.print("Pile: ");
+			pile.printPile(); System.out.println("");
+			System.out.println("Foundation: ");
+			found.printFoundation(); System.out.println("");
+			System.out.println("Tableau:");
+			boolean working = false;
+			try {
+				tab.printTableau();
+				working = true;
+			}catch(ArrayIndexOutOfBoundsException e) {
+				if(!working) {
+					for(int i = 0; i < 7; i++) {
+						System.out.println("");
+						System.out.print("Tableau stack "+(i+1)+": ");
+						tab.getStack(i+1).printStack();
+					}
+				}
+			}
+			System.out.println("Interact with: pile (1), or tableau (2). Any other entry will quit the program");
+			String choice = scan.next();
+			if(choice.charAt(0) == '1') {
+				pileInteraction(pile, found, tab);
+			}else if(choice.charAt(0) == '2') {
+				tabInteraction(pile, found, tab);
+			}else {
+				System.out.println("quit? (0) for no: ");
+				choice = scan.next();
+				if(choice.charAt(0) != 0)
+					break;
+				
+			}
+		}
+	}
+	
+	public static void pileInteraction(Pile pile, Foundation found, Tableau tab) {
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Flip pile (1), add card to foundation (2), or add card to tableau (3)");
+		String choice = scan.next();
+		if(choice.charAt(0) == '1') {
+			pile.flip();
+			return;
+		}else if(choice.charAt(0) == '2') {
+			Card card = pile.getTop();
+			int suit = card.getSuit();
+			if(found.getFStack(suit).canAdd(card)) {
+				found.getFStack(suit).addCard(card);
+				pile.take();
+			}else {
+				System.out.print("INVALID OPERATION");
+			}
+		}else if(choice.charAt(0) == '3') {
+			System.out.println("Choose tableau stack to add to (1-7)");
+			int tabstack = scan.nextInt();
+			if(tabstack < 1 || tabstack > 8) {
+				System.out.println("INVALID STACK NUMBER");
+				return;
+			}
+			Card card = pile.getTop();
+			boolean canPlace = tab.getStack(tabstack).canAdd(card);
+			if(canPlace) {
+				card.setVisible(true);
+				tab.getStack(tabstack).addCard(card);
+				pile.take();
+				System.out.println(card.getShortName()+" added to tableau.");
+			}else {
+				System.out.println("INVALID OPERATION -- card cannot be placed");
+			}
+		}else {
+			System.out.println("INVALID CHOICE");
+		}
+	}
+	
+	public static void tabInteraction(Pile pile, Foundation found, Tableau tab) {
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Choose tableau stack (1-7)");
+		int tabstack = scan.nextInt();
+		if(tabstack < 1 || tabstack > 8) {
+			System.out.println("INVALID STACK NUMBER");
+			return;
+		}
+		System.out.println("Do you want to move a card from this stack to another stack (1) or the foundation (2) ?");
+		String choice = scan.next();
+		if(choice.charAt(0) == '1') {
+			System.out.println("State value of card you want to move (Ace = 1, Jack = 11, etc)");
+			int val = scan.nextInt();
+			System.out.println("Choose tableau stack to place card(s) on (1-7)");
+			int newTab = scan.nextInt();
+			if(newTab < 1 || newTab > 8 || newTab == tabstack) {
+				System.out.println("INVALID STACK NUMBER");
+				return;
+			}
+			//case 1, card being moved is at top of stack
+			if(val == tab.getStack(tabstack).getTop().getInfo().getVal()) {
+				if(tab.getStack(newTab).canAdd(tab.getStack(tabstack).getTop().getInfo())) {
+					Card card = tab.getStack(tabstack).removeTop();
+					tab.getStack(newTab).addCard(card);
+				}else {
+					System.out.println("INVALID STACK NUMBER");
+					return;
+				}
+			}//case 2, card being removed has cards on top of it (must be visible)
+			else {
+				if(tab.getStack(tabstack).cardExists(val)) {
+					Card card = tab.getStack(tabstack).getCard(val);
+					if(tab.getStack(tabstack).switchStack(card, tab.getStack(newTab))) {
+						return;
+					}else {
+						System.out.println("INVALID OPERATION");
+						return;
+					}
+				}else {
+					System.out.println("A card of this value does not exist.");
+					return;
+				}
+			}
+		}else if(choice.charAt(0) == '2') {
+			Card card = tab.getStack(tabstack).getTop().getInfo();
+			int suit = card.getSuit();
+			if(found.getFStack(suit).canAdd(card)) {
+				found.getFStack(suit).addCard(card);
+				tab.getStack(tabstack).removeTop();
+			}
+		}else {
+			System.out.println("INVALID CHOICE");
+		}
+	}
+}
