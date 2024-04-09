@@ -80,6 +80,8 @@ public class FoundationStack implements LinkedCards{
 			return true;
 		return false;
 	}
+
+	//removes the top card, used if the player wants to put a foundation card on the tableau
 	public void removeTop() {
 		if(top != null) {
 			top = top.getLink();
@@ -91,6 +93,7 @@ public class FoundationStack implements LinkedCards{
 		}
 	}
 	
+	// returns the top card, used in gameMaker along with removeTop() method
 	public Card seeTop() {
 		if(top != null) {
 			return top.getInfo();
@@ -98,6 +101,7 @@ public class FoundationStack implements LinkedCards{
 			return new Card(0,0);
 		}
 	}
+
 	//prints top value
 	public void printTop() {
 		if(top == null)
@@ -105,6 +109,7 @@ public class FoundationStack implements LinkedCards{
 		else
 			System.out.print(" "+top.info.getShortName()+" ");
 	}
+
 	//prints from top to bottom, for testing purposes
 	public void printFoundation() {
 		LLNode<Card> traverser = top;
