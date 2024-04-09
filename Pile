@@ -28,6 +28,8 @@ public class Pile {
 		goBack();
 		return toReturn;
 	}
+
+	//used in take() to return to last valid card after a card has been removed
 	private void goBack() {
 		//most recent card becomes top card
 		while(pointer > -1 && cards[pointer] == null) {
@@ -77,6 +79,7 @@ public class Pile {
 			flip();
 		}
 	}
+
 	//prints pile with all cards after pointer hidden-- will be changed later
 	public void printPile() {
 		//special case, pile is empty
@@ -95,6 +98,8 @@ public class Pile {
 				System.out.print(" X ");
 		}
 	}
+
+	//returns the top card, the pointer
 	public Card getTop() { 
 		if(length == 0) {
 			return new Card(0,0);
