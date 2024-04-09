@@ -1,5 +1,5 @@
 /**
- * Class Name: Foundation
+ * Class Name: TableauStack
  * @author Sienna Ifill
  * Created on: 3/23/2024
  * Description: 
@@ -52,6 +52,7 @@ public class TableauStack implements LinkedCards{
 		if(nextCard.getColor() != top.getInfo().getColor()&& nextCard.getVal() == top.getInfo().getVal()-1) {
 			return true;
 		}
+		System.out.println(nextCard.getVal()+" cannot be placed on "+top.getInfo().getVal());
 		return false;
 	}
 
@@ -65,8 +66,10 @@ public class TableauStack implements LinkedCards{
 		}
 		else {
 			Card oldTop = top.getInfo();
-			if(top.getLink() == null) {
+			if(top.link == null) {
 				top = null;
+				System.out.println("This stack should now be empty");
+				length = 0;
 			}else {
 				top = top.getLink();
 				top.info.setVisible(true);
