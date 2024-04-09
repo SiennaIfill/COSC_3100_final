@@ -21,6 +21,8 @@ public class Pile {
 	public boolean isEmpty() {return length == 0;}
 	//returns the 'top' card and removes it from the array
 	public Card take() {
+		if(length == 0)
+			return new Card(0,0);
 		Card toReturn = cards[pointer];
 		cards[pointer] = null;
 		goBack();
@@ -32,7 +34,7 @@ public class Pile {
 			pointer--;	
 		}
 		//special case, all previous cards are null
-		if(pointer == -1) {
+		if(pointer == -1 && length - 1 <= 0) {
 			pointer++;
 			while(cards[pointer] == null&&!isEmpty()) {
 				flip();
@@ -43,6 +45,11 @@ public class Pile {
 	//flips card from top of pile to waste, flips whole pile if top card is the end of the array
 	public void flip() {
 		pointer++;
+		//special case, pile is empty (nothing should run if length == 0)
+		if(length < 1) {
+			length = 0;
+			return;
+		}
 		//special case, end of array reached-- need to make smaller array and send pointer back to top
 		if(pointer>length) {
 			int voidCount = 0;
@@ -65,9 +72,17 @@ public class Pile {
 			length = newLength;
 			pointer = 0;
 		}
+		// finds next non-null card (for when goBack() has been called so I don't need to flip a million times)
+		while(cards[pointer] == null) {
+			flip();
+		}
 	}
 	//prints pile with all cards after pointer hidden-- will be changed later
 	public void printPile() {
+		//special case, pile is empty
+		if(length == 0) {
+			System.out.print("empty pile");
+		}
 		for(int i = 0; i < length; i++) {
 			if(i<=pointer) {
 				if(cards[i] !=null) {
@@ -80,5 +95,10 @@ public class Pile {
 				System.out.print(" X ");
 		}
 	}
-	public Card getTop() { return cards[pointer];}
+	public Card getTop() { 
+		if(length == 0) {
+			return new Card(0,0);
+		}
+		return cards[pointer];
+	}
 }
