@@ -12,11 +12,13 @@ public class gameMaker {
 	
 	public static void main(String args[]) {
 		Scanner scan = new Scanner(System.in);
+		// initializes objects for game
 		Deck deck = new Deck();
 		deck.Shuffle();
 		Pile pile = new Pile(deck.getPile());
 		Tableau tab = new Tableau(deck.getTableau());
 		Foundation found = new Foundation();
+		// game is played in while loop until user wins or quits
 		while(!found.gameOver()) {
 			System.out.print("Pile: ");
 			pile.printPile(); System.out.println("");
@@ -24,6 +26,7 @@ public class gameMaker {
 			found.printFoundation(); System.out.println("");
 			System.out.println("Tableau:");
 			boolean working = false;
+			// try/catch block surrounds tableau print statement because it doesn't work if the print statement isn't 7x7
 			try {
 				tab.printTableau();
 				working = true;
@@ -36,6 +39,7 @@ public class gameMaker {
 					}
 				}
 			}
+			// User chooses which card/object to interact with and is sent to appropriate method
 			System.out.println("Interact with: pile (1), tableau (2), or take a card from foundation (3). Any other entry will quit the program");
 			String choice = scan.next();
 			if(choice.charAt(0) == '1') {
@@ -53,9 +57,10 @@ public class gameMaker {
 		}
 		if(found.gameOver()) {
 			System.out.println("YOU WIN!!!!!!");
-		}
+		} // game playing algorithm will go below
 	}
 	
+	// player can either flip the top card in the pile, or add the card to the tableau or foundation
 	public static void pileInteraction(Pile pile, Foundation found, Tableau tab) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Flip pile (1), add card to foundation (2), or add card to tableau (3)");
@@ -63,7 +68,8 @@ public class gameMaker {
 		if(choice.charAt(0) == '1') {
 			pile.flip();
 			return;
-		}else if(choice.charAt(0) == '2') {
+		// choice statements are out of order because I changed my mind about the order when adding the foundInteraction() method
+		}else if(choice.charAt(0) == '3') {
 			Card card = pile.getTop();
 			int suit = card.getSuit();
 			if(found.getFStack(suit).canAdd(card)) {
@@ -72,7 +78,7 @@ public class gameMaker {
 			}else {
 				System.out.print("INVALID OPERATION");
 			}
-		}else if(choice.charAt(0) == '3') {
+		}else if(choice.charAt(0) == '2') {
 			System.out.println("Choose tableau stack to add to (1-7)");
 			int tabstack = scan.nextInt();
 			if(tabstack < 1 || tabstack > 8) {
@@ -81,6 +87,7 @@ public class gameMaker {
 			}
 			Card card = pile.getTop();
 			boolean canPlace = tab.getStack(tabstack).canAdd(card);
+			// makes sure card is being used correctly before adding it to tableau
 			if(canPlace) {
 				card.setVisible(true);
 				tab.getStack(tabstack).addCard(card);
@@ -94,6 +101,7 @@ public class gameMaker {
 		}
 	}
 	
+	// player picks a card and can change its stack or add the card to the foundation
 	public static void tabInteraction(Pile pile, Foundation found, Tableau tab) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Choose tableau stack (1-7)");
@@ -149,6 +157,7 @@ public class gameMaker {
 		}
 	}
 
+	// player can move a card from foundation to the tableau
 	public static void foundInteraction(Pile pile, Foundation found, Tableau tab) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Choose suit (hearts = 1, spades = 2, diamonds = 3, clubs = 4): ");
@@ -200,7 +209,7 @@ public class gameMaker {
 			}else if(choice.charAt(0)=='4') {
 				found.getFStack(3).removeTop();
 			}
-			System.out.println(card.getShortName()+" added to tableau.");
+			//System.out.println(card.getShortName()+" added to tableau.");
 		}else {
 			System.out.println("INVALID OPERATION -- card cannot be placed");
 		}
