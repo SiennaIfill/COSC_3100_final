@@ -41,7 +41,8 @@ public class TableauStack implements LinkedCards{
 		length++;
 		//System.out.println(nextCard.getName()+" added. Length is now "+length);
 	}
-	//used for adding cards from pile to tabstacks
+
+	//used for adding cards from pile to TableauStacks
 	public boolean canAdd(Card nextCard) {
 		if(top == null) {
 			if(nextCard.getVal() == 13) 
@@ -68,7 +69,7 @@ public class TableauStack implements LinkedCards{
 			Card oldTop = top.getInfo();
 			if(top.link == null) {
 				top = null;
-				System.out.println("This stack should now be empty");
+				//System.out.println("This stack should now be empty");
 				length = 0;
 			}else {
 				top = top.getLink();
@@ -77,6 +78,8 @@ public class TableauStack implements LinkedCards{
 			return oldTop;
 		}
 	}
+
+	// returns true if a card is in the stack and visible
 	public boolean cardExists(int val) {
 		LLNode<Card> pointer = top;
 		int count = 0;
@@ -94,6 +97,8 @@ public class TableauStack implements LinkedCards{
 			return true;
 		return false;
 	}
+
+	// gets a card with a given value if it exists and is visible, used in tandem with previous message
 	public Card getCard(int val) {
 		LLNode<Card> pointer = top;
 		int count = 0;
@@ -106,6 +111,7 @@ public class TableauStack implements LinkedCards{
 		}
 		return pointer.getInfo();	
 	}
+
 	//find a visible card in a stack and keeps link to all cards above it, moving them to a new tableau stack
 	//returns T/F so I know if an operation occured
 	public boolean switchStack(Card move, TableauStack other){
@@ -140,7 +146,7 @@ public class TableauStack implements LinkedCards{
 			//correctly places earlier cards onto new stack
 			for(int j = count - 1; j > -1; j--) {
 				other.addCard(temp[j]);
-				System.out.println("Card added:"+ temp[j].getShortName());
+				//System.out.println("Card added:"+ temp[j].getShortName());
 			}
 			length = length - count;
 			return true
@@ -151,7 +157,6 @@ public class TableauStack implements LinkedCards{
 			return false;
 		}
 	}
-	
 	
 	//prints a stack top to bottom with Xs for hidden cards
 	public void printStack() {
@@ -170,6 +175,7 @@ public class TableauStack implements LinkedCards{
 				System.out.print(" X ");
 		}
 	}
+
 	//used in Tableau printTableau method to print a full Tableau
 	public String[] printArray(int size) {
 		String[] returnArr = new String[size];
@@ -238,6 +244,7 @@ public class TableauStack implements LinkedCards{
 		}
 		return false;
 	}
+
 	//returns length, used for printTableau() in Tableau
 	public int getLength() {return length;}
 	//returns top, used for printTableau() in Tableau to make pointers
