@@ -36,19 +36,23 @@ public class gameMaker {
 					}
 				}
 			}
-			System.out.println("Interact with: pile (1), or tableau (2). Any other entry will quit the program");
+			System.out.println("Interact with: pile (1), tableau (2), or take a card from foundation (3). Any other entry will quit the program");
 			String choice = scan.next();
 			if(choice.charAt(0) == '1') {
 				pileInteraction(pile, found, tab);
 			}else if(choice.charAt(0) == '2') {
 				tabInteraction(pile, found, tab);
+			}else if(choice.charAt(0) == '3'){
+				foundInteraction(pile, found, tab);
 			}else {
 				System.out.println("quit? (0) for no: ");
 				choice = scan.next();
 				if(choice.charAt(0) != 0)
-					break;
-				
+					break;	
 			}
+		}
+		if(found.gameOver()) {
+			System.out.println("YOU WIN!!!!!!");
 		}
 	}
 	
@@ -142,6 +146,63 @@ public class gameMaker {
 			}
 		}else {
 			System.out.println("INVALID CHOICE");
+		}
+	}
+
+	public static void foundInteraction(Pile pile, Foundation found, Tableau tab) {
+		Scanner scan = new Scanner(System.in);
+		System.out.println("Choose suit (hearts = 1, spades = 2, diamonds = 3, clubs = 4): ");
+		String choice = scan.next();
+		Card card = new Card(0,0);
+		if(choice.charAt(0)=='1') {
+			card = found.getFStack(2).seeTop();
+			if(!card.validCard()) {
+				System.out.println("INVALID OPERATION, EMPTY STACK");
+				return;
+			}
+		}else if(choice.charAt(0)=='2') {
+			card = found.getFStack(4).seeTop();
+			if(!card.validCard()) {
+				System.out.println("INVALID OPERATION, EMPTY STACK");
+				return;
+			}
+		}else if(choice.charAt(0)=='3') {
+			card = found.getFStack(1).seeTop();
+			if(!card.validCard()) {
+				System.out.println("INVALID OPERATION, EMPTY STACK");
+				return;
+			}
+		}else if(choice.charAt(0)=='4') {
+			card = found.getFStack(3).seeTop();
+			if(!card.validCard()) {
+				System.out.println("INVALID OPERATION, EMPTY STACK");
+				return;
+			}
+		}else {
+			System.out.println("INVALID CHOICE");
+			return;
+		}
+		System.out.println("Choose a stack to add the card to (1-7): ");
+		int tabstack = scan.nextInt();
+		if(tabstack < 1 || tabstack > 8) {
+			System.out.println("INVALID STACK NUMBER");
+			return;
+		}
+		boolean canPlace = tab.getStack(tabstack).canAdd(card);
+		if(canPlace) {
+			tab.getStack(tabstack).addCard(card);
+			if(choice.charAt(0)=='1') {
+				found.getFStack(2).removeTop();
+			}else if(choice.charAt(0)=='2') {
+				found.getFStack(4).removeTop();
+			}else if(choice.charAt(0)=='3') {
+				found.getFStack(1).removeTop();
+			}else if(choice.charAt(0)=='4') {
+				found.getFStack(3).removeTop();
+			}
+			System.out.println(card.getShortName()+" added to tableau.");
+		}else {
+			System.out.println("INVALID OPERATION -- card cannot be placed");
 		}
 	}
 }
