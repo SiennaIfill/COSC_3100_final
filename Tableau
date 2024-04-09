@@ -38,6 +38,7 @@ public class Tableau {
 		return true;
 	}
 	
+	//prints all tableauStacks next to each other to give the appearance of the real thing
 	public void printTableau() {
 		int maxLength = 0;
 		for(int i = 0; i < 7; i++) {
@@ -46,6 +47,7 @@ public class Tableau {
 					maxLength = stacks[i].getLength();
 		}
 		String[][] cards = {s1.printArray(maxLength),s2.printArray(maxLength),s3.printArray(maxLength),s4.printArray(maxLength),s5.printArray(maxLength),s6.printArray(maxLength),s7.printArray(maxLength)};
+		// there's gotta be a better way but idk
 		for(int j = 0; j < 7; j++) {
 			for(int k = 0; k < maxLength; k++) {
 				System.out.print(cards[k][j]);
@@ -54,6 +56,7 @@ public class Tableau {
 		}
 	}
 	
+	//returns a certain TableauStack
 	public TableauStack getStack(int num) {
 		return stacks[num+1];
 	}
