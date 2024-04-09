@@ -46,6 +46,7 @@ public class Card {
 	public int getSuit() {return suit;}
 	public int getColor() {return color;}
 	public boolean getVisible() {return visible;}
+		// returns a 2-3 character long string of the shortened name of the card (example: ace of spades = AS)
 	public String getShortName() {
 		String suitC = "";
 		if(suit == 1)
@@ -68,6 +69,7 @@ public class Card {
 		
 		return valC+suitC;
 	}
+		// writes out the card's name (example: Ace of Spades)
 	public String getName() {
 		String number = "";
 		String type = "";
