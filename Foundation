@@ -10,7 +10,8 @@
 public class Foundation {
 	private FoundationStack hearts, spades, diamonds, clubs;
 	private FoundationStack[] foundation;
-	
+
+	//initializes the four foundation stacks in the correct order (I should've made this easier for myself) and stores them into an array
 	public Foundation() {
 		hearts = new FoundationStack(2);
 		spades = new FoundationStack(4);
@@ -18,7 +19,8 @@ public class Foundation {
 		clubs = new FoundationStack(3);
 		foundation = new FoundationStack[]{hearts, spades, diamonds, clubs};
 	}
-	
+
+	// returns true if all four foundation stacks are full, signaling that the game is over
 	public boolean gameOver() {
 		for(int i = 0; i < 4; i++) {
 			if(!foundation[i].isFull())
@@ -26,11 +28,15 @@ public class Foundation {
 		}
 		return true;
 	}
+
+	// prints the top card on a foundation stack (this is how they appear in gameMaker)
 	public void printFoundation() {
 		for(int i = 0; i < 4; i++) {
 			foundation[i].printTop();
 		}
 	}
+
+	// returns the desired foundation stack (again, I should've made my life easier)
 	public FoundationStack getFStack(int suit) {
 		if(suit == 2) {
 			return foundation[0];
