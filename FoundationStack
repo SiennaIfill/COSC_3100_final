@@ -45,7 +45,6 @@ public class FoundationStack implements LinkedCards{
 			}
 		}
 	}
-	@Override
 	//adds new card to foundation pile, checking that card is valid
 	public void addCard(Card nextCard) {
 		if(!canAdd(nextCard) {
@@ -86,6 +85,17 @@ public class FoundationStack implements LinkedCards{
 			top = top.getLink();
 			if(!top.getInfo().getVisible())
 				top.getInfo().setVisible(true);
+		}
+		else {
+			System.out.println("INVALID OPERATION, NULL STACK");
+		}
+	}
+	
+	public Card seeTop() {
+		if(top != null) {
+			return top.getInfo();
+		}else {
+			return new Card(0,0);
 		}
 	}
 	//prints top value
