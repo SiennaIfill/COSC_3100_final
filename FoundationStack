@@ -48,7 +48,7 @@ public class FoundationStack implements LinkedCards{
 	//adds new card to foundation pile, checking that card is valid
 	public void addCard(Card nextCard) {
 		if(!canAdd(nextCard) {
-			System.out.println("INVALID CARD, WRONG SUIT");
+			System.out.println("INVALID CARD, WRONG SUIT. Suit: "+suit+", yours, "+nextCard.getSuit());
 		}else {
 			LLNode<Card> next = new LLNode<Card>(nextCard);
 			//case 1, no cards down
