@@ -66,8 +66,10 @@ public class gameMaker {
 		System.out.println("Flip pile (1), add card to foundation (2), or add card to tableau (3)");
 		String choice = scan.next();
 		if(choice.charAt(0) == '1') {
-			pile.flip();
-			return;
+			if(!pile.isEmpty()) {
+				pile.flip();
+				return;
+			}
 		// choice statements are out of order because I changed my mind about the order when adding the foundInteraction() method
 		}else if(choice.charAt(0) == '3') {
 			Card card = pile.getTop();
@@ -191,6 +193,7 @@ public class gameMaker {
 			System.out.println("INVALID CHOICE");
 			return;
 		}
+		card.setVisible(true);
 		System.out.println("Choose a stack to add the card to (1-7): ");
 		int tabstack = scan.nextInt();
 		if(tabstack < 1 || tabstack > 8) {
