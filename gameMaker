@@ -57,7 +57,45 @@ public class gameMaker {
 		}
 		if(found.gameOver()) {
 			System.out.println("YOU WIN!!!!!!");
+			System.out.println("Foundation: ");
+			found.printFoundation(); System.out.println("");
+			System.out.println("Tableau:");
+			boolean working = false;
+			// try/catch block surrounds tableau print statement because it doesn't work if the print statement isn't 7x7
+			try {
+				tab.printTableau();
+				working = true;
+			}catch(ArrayIndexOutOfBoundsException e) {
+				if(!working) {
+					for(int i = 0; i < 7; i++) {
+						System.out.println("");
+						System.out.print("Tableau stack "+(i+1)+": ");
+						tab.getStack(i+1).printStack();
+					}
+				}
+			}
 		} // game playing algorithm will go below
+		Finisher cpu = new Finisher(pile, found, tab);
+		boolean gameEnd = found.gameOver();
+		while(!gameEnd) {
+			if(cpu.canEnd()) {
+				System.out.println("RUNNING CPU");
+				int cardsLeft = cpu.cardsLeftTab();
+				int numruns;
+				if(cardsLeft % 14 == 0) {
+					numruns = cardsLeft/14;
+				}else {
+					numruns = cardsLeft/14 +1;
+				}
+				for(int i = 0; i < numruns; i++) {
+					cpu.ender();
+				}
+			}else {
+				System.out.println("CPU did not run");
+				break;
+			}
+			gameEnd = found.gameOver();
+		}
 	}
 	
 	// player can either flip the top card in the pile, or add the card to the tableau or foundation
