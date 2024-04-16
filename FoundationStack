@@ -121,4 +121,17 @@ public class FoundationStack implements LinkedCards{
 			traverser = traverser.getLink();
 		}
 	}
+
+	//returns suit, used in Finisher for print statements
+	public String getSuit() {
+		if (suit == 1)
+			return "diamonds";
+		if(suit == 2)
+			return "hearts";
+		if(suit == 3)
+			return "clubs";
+		if(suit == 4)
+			return "spades";
+		return "invalid";
+	}
 }
