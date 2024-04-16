@@ -60,4 +60,25 @@ public class Tableau {
 	public TableauStack getStack(int num) {
 		return stacks[num+1];
 	}
+
+	//returns true if all cards in all stacks are visible, used in Finisher
+	public boolean allVisible() {
+		for(int i = 0; i < 7; i++) {
+			if(!stacks[i].allVisible())
+				return false;
+		}
+		return true;
+	}
+	
+	//returns an array with all tabstacks, used in finisher
+	public TableauStack[] getAllStacks() {return stacks;}
+	
+	// returns the number of cards left in the tableau, used for finisher
+	public int cardsLeft() {
+		int count = 0;
+		for(int i = 0; i < 7; i++) {
+			count += stacks[i].cardsLeft();
+		}
+		return count;
+	}
 }
