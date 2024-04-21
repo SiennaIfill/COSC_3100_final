@@ -34,6 +34,7 @@ public class Finisher {
 	
 	// checks if the pile is complete and all tabstacks have all cards visible
 	public boolean canEnd() {
+		pile.flip();
 		if(!pile.isEmpty())
 			return false;
 		if(!tab.allVisible())
@@ -135,13 +136,97 @@ public class Finisher {
 								System.out.print("Tableau stack "+(j+1)+": ");
 								tab.getStack(j+1).printStack();
 							}
+							System.out.println("");
 						}
 					}
 				}catch(NullPointerException e) {}
 			}
 		}
 	}
+
+	//checks if all cards in tab are visible, used to activate clearPile()
+	public boolean canClearPile() {
+		return tab.allVisible();
+	}
 	
+	// clears all card into tableau and foundation, then activates ender
+	public void clearPile() {
+		//System.out.println("clearPile method entered");
+		pile.flip();
+		if(pile.isEmpty()) {
+			ender();
+			return;
+		}
+		pile.reset();
+		Card pointer = pile.getTop();
+		Card zero = pile.firstIndex();
+		if(zero.equals(null)) {
+			ender();
+		}else if(zero.equals(pointer)) {
+			while(!pile.isEmpty()) {
+				int l1 = pile.getLength();
+				//runs through whole array
+				for(int i = 0; i < pile.getLength(); i++) {
+					Card card = pile.getTop();
+					int suit = card.getSuit();
+					boolean moved = false;
+					// case 1, card can be added to foundation
+					if(found.getFStack(suit).canAdd(card)) {
+						found.getFStack(suit).addCard(card);
+						pile.take();
+						System.out.println(card.getShortName()+" added to foundation");
+						System.out.print("Pile: ");
+						pile.printPile(); System.out.println("");
+						System.out.println("Foundation: ");
+						found.printFoundation(); System.out.println("");
+						System.out.println("Tableau:");
+						for (int j = 0; j < 7; j++) {
+							System.out.println("");
+							System.out.print("Tableau stack "+(j+1)+": ");
+							tab.getStack(j+1).printStack();
+						}
+						System.out.println("");
+						moved = true;
+						pile.flip();
+					// case 2, card can be added to tableau
+					}else {
+						for(int j = 1; j < 8; j++) {
+							if(tab.getStack(j).canAdd(card)) {
+								card.setVisible(true);
+								tab.getStack(j).addCard(card);
+								pile.take();
+								System.out.println(card.getShortName()+" added to tableau stack "+j);
+								System.out.print("Pile: ");
+								pile.printPile(); System.out.println("");
+								System.out.println("Foundation: ");
+								found.printFoundation(); System.out.println("");
+								System.out.println("Tableau:");
+								for (int k = 0; k < 7; k++) {
+									System.out.println("");
+									System.out.print("Tableau stack "+(k+1)+": ");
+									tab.getStack(k+1).printStack();
+								}
+								System.out.println("");
+								moved = true;
+								pile.flip();
+								break;
+							}
+						}
+					}
+					if(!moved) {
+						pile.flip();
+					}
+					if(pile.getLength() == 0)
+						break;
+				}
+				if(l1 == pile.getLength() || pile.getLength() == 0)
+					break;
+			}
+			if(pile.isEmpty())
+				ender();
+		}
+	}
+
 	public int cardsLeftTab() {return tab.cardsLeft();}
 	
 }
