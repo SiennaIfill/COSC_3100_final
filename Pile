@@ -25,7 +25,14 @@ public class Pile {
 			return new Card(0,0);
 		Card toReturn = cards[pointer];
 		cards[pointer] = null;
-		goBack();
+		try{
+			goBack();
+		}catch(ArrayIndexOutOfBoundsException e) {
+			reset();
+			if(length == 1) {
+				length = 0;
+			}
+		}
 		return toReturn;
 	}
 
@@ -110,5 +117,40 @@ public class Pile {
 			return new Card(0,0);
 		}
 		return cards[pointer];
+	}
+
+	//returns card at index 0
+	public Card firstIndex() {
+		try {
+			return cards[0];
+		}catch(NullPointerException e) {}
+		return null;
+	}
+	
+	//returns current length of pile array
+	public int getLength() {
+		return cards.length;
+	}
+	//sets pile with current cards at correct length, used in finisher
+	public void reset() {
+		int voidCount = 0;
+		for(int i = 0; i < length; i++) {
+			if(cards[i] == null)
+				voidCount++;
+		}
+		int newLength = length-voidCount;
+		Card[] newCards = new Card[newLength];
+		int cardCount = 0;
+		for(int j = 0; j < length; j++) {
+			if(cardCount == newLength)
+				break;
+			if(cards[j] != null) {
+				newCards[cardCount] = cards[j];
+				cardCount++;
+			}
+		}
+		cards = newCards;
+		length = newLength;
+		pointer = 0;
 	}
 }
