@@ -80,16 +80,11 @@ public class gameMaker {
 		while(!gameEnd) {
 			if(cpu.canEnd()) {
 				System.out.println("RUNNING CPU");
-				int cardsLeft = cpu.cardsLeftTab();
-				int numruns;
-				if(cardsLeft % 14 == 0) {
-					numruns = cardsLeft/14;
-				}else {
-					numruns = cardsLeft/14 +1;
-				}
-				for(int i = 0; i < numruns; i++) {
-					cpu.ender();
-				}
+				cpu.ender();
+				System.out.println("GAME OVER");
+			}else if (cpu.canClearPile()) {
+				//System.out.println("RUNNING CPU");
+				cpu.clearPile();
 			}else {
 				System.out.println("CPU did not run");
 				break;
