@@ -2,6 +2,7 @@
  * Class Name: Finisher
  * @author Sienna Ifill
  * Created on: 4/11/2024
+ * Completely redesigned on 4/27/2024
  * Description: 
  *   Completes a game that the player has started and quit
  *   Will quit if game is unwinnable (about 20% of the time)
@@ -13,13 +14,15 @@ public class Finisher {
 	
 	Card[] foundTops;
 	Card[] tabTops;
-	
-	
+	Card[] tabBottomVisible;
+
+
 	// constructor takes in the pile, foundation and tableau that the player used
 	public Finisher(Pile pile, Foundation found, Tableau tab) {
 		this.pile = pile;
 		this.found = found;
 		this.tab = tab;
+		pile.reset();
 		foundTops = new Card[4];
 		for(int i = 1; i < 5; i++) {
 			foundTops[i-1] = found.getFStack(i).seeTop();
@@ -29,6 +32,20 @@ public class Finisher {
 			tabTops[i-1] = tab.getStack(i).seeTop();
 			if(tab.getStack(i).cardsLeft()==0)
 				tabTops[i-1] = null;
+		}
+		tabBottomVisible = new Card[7];
+		for(int i = 1; i < 8; i++) {
+			LLNode<Card> pointer = tab.getStack(i).getTopLinked();
+			try {
+				Card card = pointer.getInfo();
+				while(pointer.getLink() != null  && pointer.getLink().getInfo().getVisible()) {
+					pointer = pointer.getLink();
+					card = pointer.getInfo();
+				}
+				tabBottomVisible[i-1] = card;
+			}catch(NullPointerException e) {
+				tabBottomVisible[i-1] = new Card(0,0);
+			}
 		}
 	}
 	
@@ -60,16 +77,7 @@ public class Finisher {
 							System.out.println(card.getShortName() +" added to foundation "+found.getFStack(1).getSuit());
 							cardsLeft--;
 							System.out.println("Cards left: "+cardsLeft);
-							System.out.print("Pile: ");
-							pile.printPile(); System.out.println("");
-							System.out.println("Foundation: ");
-							found.printFoundation(); System.out.println("");
-							System.out.println("Tableau:");
-							for (int j = 0; j < 7; j++) {
-								System.out.println("");
-								System.out.print("Tableau stack "+(j+1)+": ");
-								tab.getStack(j+1).printStack();
-							}
+							cpuPrint();
 						}
 					// clubs
 					} else if(tabTops[i].getSuit() == 2) {
@@ -82,16 +90,7 @@ public class Finisher {
 							System.out.println(card.getShortName() +" added to foundation "+found.getFStack(2).getSuit());
 							cardsLeft--;
 							System.out.println("Cards left: "+cardsLeft);
-							System.out.print("Pile: ");
-							pile.printPile(); System.out.println("");
-							System.out.println("Foundation: ");
-							found.printFoundation(); System.out.println("");
-							System.out.println("Tableau:");
-							for (int j = 0; j < 7; j++) {
-								System.out.println("");
-								System.out.print("Tableau stack "+(j+1)+": ");
-								tab.getStack(j+1).printStack();
-							}
+							cpuPrint();
 						}
 					// hearts
 					} else if(tabTops[i].getSuit() == 3) {
@@ -104,16 +103,7 @@ public class Finisher {
 							System.out.println(card.getShortName() +" added to foundation "+found.getFStack(3).getSuit());
 							cardsLeft--;
 							System.out.println("Cards left: "+cardsLeft);
-							System.out.print("Pile: ");
-							pile.printPile(); System.out.println("");
-							System.out.println("Foundation: ");
-							found.printFoundation(); System.out.println("");
-							System.out.println("Tableau:");
-							for (int j = 0; j < 7; j++) {
-								System.out.println("");
-								System.out.print("Tableau stack "+(j+1)+": ");
-								tab.getStack(j+1).printStack();
-							}
+							cpuPrint();
 						}
 					// spades
 					}else if(tabTops[i].getSuit() == 4) {
@@ -126,16 +116,7 @@ public class Finisher {
 							System.out.println(card.getShortName() +" added to foundation "+found.getFStack(4).getSuit());
 							cardsLeft--;
 							System.out.println("Cards left: "+cardsLeft);
-							System.out.print("Pile: ");
-							pile.printPile(); System.out.println("");
-							System.out.println("Foundation: ");
-							found.printFoundation(); System.out.println("");
-							System.out.println("Tableau:");
-							for (int j = 0; j < 7; j++) {
-								System.out.println("");
-								System.out.print("Tableau stack "+(j+1)+": ");
-								tab.getStack(j+1).printStack();
-							}
+							cpuPrint();
 							System.out.println("");
 						}
 					}
@@ -227,6 +208,185 @@ public class Finisher {
 		}
 	}
 
-	public int cardsLeftTab() {return tab.cardsLeft();}
+	//executes algorithm
+	public void play() {
+		int count = 0;
+		while(!found.gameOver()) {
+			int cl = tab.cardsLeft()+pile.getLength();
+			//skipping ender and clearPile fxns
+			if(cl == 52) {
+				System.out.println("Running checkTabTops");
+				for(int i = 0; i < 7; i++) {
+					checkTabTops(i);
+				}
+			}
+			if(!tab.allVisible()) {
+				for(int i = 1; i < 8; i++) {
+					System.out.println("Running tryAndStack");
+					tryAndStack(i);
+				}
+			}
+			if(!pile.isEmpty()) {
+				System.out.println("Running traversePile");
+				traversePile();
+			}
+			for(int i = 0; i < 7; i++) {
+				System.out.println("Running checkTabTops");
+				checkTabTops(i);
+			}
+			if(cl == tab.cardsLeft()+pile.getLength())
+				count++;
+			if(count == 5)
+				break;
+		}
+		if(found.gameOver())
+			System.out.println("Game completed");
+		else {
+			System.out.println("Game unwinnable");
+			System.out.print("Pile: ");
+			pile.printVisPile(); System.out.println("");
+			System.out.println("Foundation: ");
+			found.printFoundation(); System.out.println("");
+			System.out.println("Tableau:");
+			for (int j = 0; j < 7; j++) {
+			System.out.println("");
+				System.out.print("Tableau stack "+(j+1)+": ");
+				tab.getStack(j+1).printStack();
+			}
+		}
+	}
+
+	//sees if the top card in a given stack can be added to foundation
+	//recursive call to check new top card
+	public void checkTabTops(int i) {
+		System.out.println("Checking tabstack "+(i+1));
+		try {
+			int suit = tabTops[i].getSuit();
+			if(found.getFStack(suit).canAdd(tabTops[i])) {
+				Card card = tab.getStack(i+1).removeTop();
+				found.getFStack(suit).addCard(card);
+				foundTops[suit-1] = card;
+				if(tabBottomVisible[i] == tabTops[i]) {
+					tabBottomVisible[i] = tab.getStack(i+1).seeTop(); 
+				}
+				tabTops[i] = tab.getStack(i+1).seeTop();
+				cpuPrint();
+				doubleCheckArrays();
+				checkTabTops(i);
+			}
+		}catch(NullPointerException e) {}
+	}
 	
+	//sees if the bottom visible card in a given tabstack can be sent to another stack
+	//need a special case so kings don't constantly switch between nulls
+	//calls checkTabTops for new top card in tabstack
+	public void tryAndStack(int stack){
+		Card card = tabBottomVisible[stack - 1];
+		if(card.getVal()==13) {
+			if(tab.getStack(stack).lastCard())
+				return;
+		}
+		if(card.validCard()) {
+			for(int i = 1; i < 8; i++) {
+				if(i != stack) {
+					if(tab.getStack(i).canAdd(card)) {
+						tab.getStack(stack).switchStack(card, tab.getStack(i));
+						tabTops[stack - 1] = tab.getStack(stack).seeTop();
+						tabBottomVisible[stack - 1] = tabTops[stack - 1];
+						cpuPrint();
+						doubleCheckArrays();
+						checkTabTops(stack - 1);
+						tryAndStack(stack);
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	//traverse pile and adds all possible cards to foundation or tableau
+	public void traversePile(){
+		int start = pile.getLength();
+		for(int i = 0; i < start; i++) {
+			boolean moved = false;
+			Card card = new Card(0,0);
+			try {
+			card = pile.getTop();
+			}catch(NullPointerException e) {
+				continue;
+			}
+			int suit = card.getSuit();
+			if(found.getFStack(suit).canAdd(card)) {
+				found.getFStack(suit).addCard(card);
+				pile.take();
+				foundTops[suit - 1] = card;
+				moved = true;
+				System.out.println(card.getShortName()+" added to foundation stack "+found.getFStack(suit).getSuit());
+				cpuPrint();
+				for(int k = 0; k < 7; k++) {
+					System.out.println("Running checkTabTops");
+					checkTabTops(k);
+				}
+			}else {
+				for(int j = 1; j < 8; j++) {
+					if(tab.getStack(j).canAdd(card)) {
+						card.setVisible(true);
+						tab.getStack(j).addCard(card);
+						pile.take();
+						moved = true;
+						System.out.println(card.getShortName()+" added to tabstack "+j);
+						doubleCheckArrays();
+						cpuPrint();
+						for(int k = 1; k < 8; k++) {
+							System.out.println("Running tryAndStack");
+							tryAndStack(k);
+						}
+						break;
+					}
+				}
+			}
+			pile.flip();
+			if(!moved) {
+				System.out.println("Pile flipped");
+				cpuPrint();
+			}
+		}
+	}
+	
+
+	public int cardsLeftTab() {return tab.cardsLeft();}
+	private void doubleCheckArrays() {
+		for(int i = 1; i < 8; i++) {
+			tabTops[i-1] = tab.getStack(i).seeTop();
+			if(tab.getStack(i).cardsLeft()==0)
+				tabTops[i-1] = null;
+		}
+		for(int i = 1; i < 8; i++) {
+			LLNode<Card> pointer = tab.getStack(i).getTopLinked();
+			try {
+				Card card = pointer.getInfo();
+				while(pointer.getLink() != null  && pointer.getLink().getInfo().getVisible()) {
+					pointer = pointer.getLink();
+					card = pointer.getInfo();
+					if(card.getVal()==13)
+						break;
+				}
+				tabBottomVisible[i-1] = card;
+			}catch(NullPointerException e) {
+				tabBottomVisible[i-1] = new Card(0,0);
+			}
+		}
+	}
+	public void cpuPrint() {
+		System.out.print("Pile: ");
+		pile.printPile(); System.out.println("");
+		System.out.println("Foundation: ");
+		found.printFoundation(); System.out.println("");
+		System.out.println("Tableau:");
+		for (int j = 0; j < 7; j++) {
+			System.out.println("");
+			System.out.print("Tableau stack "+(j+1)+": ");
+			tab.getStack(j+1).printStack();
+		}
+	}
 }
