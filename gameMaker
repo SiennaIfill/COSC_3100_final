@@ -75,9 +75,8 @@ public class gameMaker {
 				}
 			}
 		} // game playing algorithm will go below
-		Finisher cpu = new Finisher(pile, found, tab);
-		boolean gameEnd = found.gameOver();
-		while(!gameEnd) {
+		else {
+			Finisher cpu = new Finisher(pile, found, tab);
 			if(cpu.canEnd()) {
 				System.out.println("RUNNING CPU");
 				cpu.ender();
@@ -86,10 +85,8 @@ public class gameMaker {
 				//System.out.println("RUNNING CPU");
 				cpu.clearPile();
 			}else {
-				System.out.println("CPU did not run");
-				break;
+				cpu.play();
 			}
-			gameEnd = found.gameOver();
 		}
 	}
 	
