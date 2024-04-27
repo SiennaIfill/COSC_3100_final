@@ -213,7 +213,6 @@ public class Finisher {
 		int count = 0;
 		while(!found.gameOver()) {
 			int cl = tab.cardsLeft()+pile.getLength();
-			//skipping ender and clearPile fxns
 			if(cl == 52) {
 				System.out.println("Running checkTabTops");
 				for(int i = 0; i < 7; i++) {
@@ -224,6 +223,14 @@ public class Finisher {
 				for(int i = 1; i < 8; i++) {
 					System.out.println("Running tryAndStack");
 					tryAndStack(i);
+				}
+			}}else {
+				if(canEnd()) {
+					ender();
+					return;
+				}else if(canClearPile()) {
+					clearPile();
+					return;
 				}
 			}
 			if(!pile.isEmpty()) {
@@ -262,6 +269,10 @@ public class Finisher {
 		System.out.println("Checking tabstack "+(i+1));
 		try {
 			int suit = tabTops[i].getSuit();
+			if(tabTops[i].getVal()==0 ||tabTops[i] == null) {
+				System.out.println("top val == 0 or null");
+				return;
+			}
 			if(found.getFStack(suit).canAdd(tabTops[i])) {
 				Card card = tab.getStack(i+1).removeTop();
 				found.getFStack(suit).addCard(card);
@@ -272,7 +283,8 @@ public class Finisher {
 				tabTops[i] = tab.getStack(i+1).seeTop();
 				cpuPrint();
 				doubleCheckArrays();
-				checkTabTops(i);
+				if(!tabTops[i].equals(card))
+					checkTabTops(i);
 			}
 		}catch(NullPointerException e) {}
 	}
